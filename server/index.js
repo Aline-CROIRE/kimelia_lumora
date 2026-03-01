@@ -1,30 +1,28 @@
-const express = require('express');
-const mongoose = require('mongoose'); // Import mongoose
-const authRouter = require('./routes/auth'); // Import the route
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const authRouter = require("./routes/auth");
+require("dotenv").config();
 
-const cors = require('cors');
-require('dotenv').config();
-
-const app = express();
 const PORT = process.env.PORT || 5000;
-const DB_URI = process.env.MONGODB_URI; // Get URI from .env
+const app = express();
+const DB = process.env.MONGODB_URI;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(authRouter); // Note: The routes in auth.js already start with /api
 
+// Connection
+mongoose
+  .connect(DB)
+  .then(() => {
+    console.log("✅ Connection Successful to MongoDB");
+  })
+  .catch((e) => {
+    console.log(e);
+  });
 
-// Database Connection
-mongoose.connect(DB_URI)
-    .then(() => console.log('✅ Connected to MongoDB Atlas'))
-    .catch((err) => console.error('❌ MongoDB Connection Error:', err));
-// Routes
-app.use('/api', authRouter); // Tell express to use /api/signup
-// Test Route
-app.get('/', (req, res) => {
-    res.send('Kimelia Lumora API is live!');
-});
-
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Connected at port ${PORT}`);
 });
