@@ -1,20 +1,26 @@
 const express = require('express');
+const mongoose = require('mongoose'); // Import mongoose
 const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const DB_URI = process.env.MONGODB_URI; // Get URI from .env
 
 // Middleware
-app.use(cors()); // Allows cross-origin requests
-app.use(express.json()); // Allows the server to understand JSON data
+app.use(cors());
+app.use(express.json());
 
-// A simple test route
+// Database Connection
+mongoose.connect(DB_URI)
+    .then(() => console.log('✅ Connected to MongoDB Atlas'))
+    .catch((err) => console.error('❌ MongoDB Connection Error:', err));
+
+// Test Route
 app.get('/', (req, res) => {
-    res.send('Welcome to the Kimelia Lumora API!');
+    res.send('Kimelia Lumora API is live!');
 });
 
-// Start the server
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`🚀 Server running on port ${PORT}`);
 });
